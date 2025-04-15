@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
+import HeroSection from "@/components/HeroSection";
 import FeaturedWallpapers from "@/components/FeaturedWallpapers";
 import WallpaperGrid from "@/components/WallpaperGrid";
 import { Wallpaper, Genre, WallpaperFilters } from "@/types/wallpaper";
@@ -103,14 +104,19 @@ const Index = () => {
         onSearch={handleSearch}
       />
       
+      {/* Hero Section */}
+      <HeroSection />
+      
       <main className="container mx-auto px-4 py-8">
         {/* Trending Section */}
-        <FeaturedWallpapers 
-          wallpapers={trendingWallpapers} 
-          isLoading={isLoadingTrending} 
-          onDownload={handleDownload}
-          title="Trending Wallpapers"
-        />
+        <div id="trending-section">
+          <FeaturedWallpapers 
+            wallpapers={trendingWallpapers} 
+            isLoading={isLoadingTrending} 
+            onDownload={handleDownload}
+            title="Trending Wallpapers"
+          />
+        </div>
         
         {/* Main Wallpaper Grid */}
         <section className="py-8">
