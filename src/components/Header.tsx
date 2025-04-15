@@ -1,8 +1,14 @@
 
 import React, { useState, useEffect } from "react";
-import { Menu, X, Search, Download } from "lucide-react";
+import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Genre } from "@/types/wallpaper";
-import { Button } from "./ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
 interface HeaderProps {
   genres: Genre[];
@@ -11,10 +17,19 @@ interface HeaderProps {
   onSearch: (query: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ genres, activeGenre, onGenreSelect, onSearch }) => {
+const Header: React.FC<HeaderProps> = ({ 
+  genres, 
+  activeGenre, 
+  onGenreSelect, 
+  onSearch 
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Show first 6 genres in main nav, rest in dropdown
+  const mainGenres = genres.slice(0, 6);
+  const dropdownGenres = genres.slice(6);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({ genres, activeGenre, onGenreSelect, onS
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-6">
             <button 
               onClick={() => onGenreSelect(null)}
               className={`text-sm font-medium transition-colors hover:text-dark-accent ${
@@ -55,7 +70,8 @@ const Header: React.FC<HeaderProps> = ({ genres, activeGenre, onGenreSelect, onS
             >
               All
             </button>
-            {genres.slice(0, 6).map((genre) => (
+            
+            {mainGenres.map((genre) => (
               <button
                 key={genre.id}
                 onClick={() => onGenreSelect(genre.slug)}
@@ -66,26 +82,33 @@ const Header: React.FC<HeaderProps> = ({ genres, activeGenre, onGenreSelect, onS
                 {genre.name}
               </button>
             ))}
-            {genres.length > 6 && (
-              <div className="relative group">
-                <button className="text-sm font-medium text-white/80 transition-colors hover:text-dark-accent">
-                  More
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-dark-lighter rounded-md shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  {genres.slice(6).map((genre) => (
-                    <button
-                      key={genre.id}
-                      onClick={() => onGenreSelect(genre.slug)}
-                      className={`block px-4 py-2 text-sm text-left w-full hover:bg-dark-accent/10 ${
-                        activeGenre === genre.slug ? "text-dark-accent" : "text-white/80"
-                      }`}
-                    >
-                      {genre.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger 
+                    className="text-sm font-medium text-white/80 hover:text-dark-accent"
+                  >
+                    More Genres
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[400px] gap-1 p-4 bg-dark-lighter">
+                      {dropdownGenres.map((genre) => (
+                        <button
+                          key={genre.id}
+                          onClick={() => onGenreSelect(genre.slug)}
+                          className={`flex items-center px-4 py-2 text-sm text-left rounded-md transition-colors hover:bg-dark-accent/10 ${
+                            activeGenre === genre.slug ? "text-dark-accent" : "text-white/80"
+                          }`}
+                        >
+                          {genre.name}
+                        </button>
+                      ))}
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
           </nav>
 
           {/* Search and Mobile menu button */}

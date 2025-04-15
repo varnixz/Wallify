@@ -1,4 +1,3 @@
-
 import { Wallpaper, Genre } from "@/types/wallpaper";
 
 export const mockGenres: Genre[] = [
@@ -10,6 +9,13 @@ export const mockGenres: Genre[] = [
   { id: "6", name: "Technology", slug: "technology" },
   { id: "7", name: "Minimalist", slug: "minimalist" },
   { id: "8", name: "Art", slug: "art" },
+  { id: "9", name: "Landscapes", slug: "landscapes" },
+  { id: "10", name: "Urban", slug: "urban" },
+  { id: "11", name: "Fantasy", slug: "fantasy" },
+  { id: "12", name: "Sci-Fi", slug: "sci-fi" },
+  { id: "13", name: "Dark", slug: "dark" },
+  { id: "14", name: "Neon", slug: "neon" },
+  { id: "15", name: "Vintage", slug: "vintage" }
 ];
 
 export const mockWallpapers: Wallpaper[] = [
@@ -168,15 +174,91 @@ export const mockWallpapers: Wallpaper[] = [
     views: 2973,
     featured: false,
     createdAt: Date.now() - 12000000,
+  },
+  {
+    id: "13",
+    url: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809",
+    title: "Neon Waves",
+    genre: ["abstract", "neon"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 312,
+    views: 1842,
+    featured: false,
+    createdAt: Date.now() - 13000000,
+  },
+  {
+    id: "14",
+    url: "https://images.unsplash.com/photo-1560932684-7363f2b630a8",
+    title: "Urban Night",
+    genre: ["urban", "dark", "neon"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 287,
+    views: 1654,
+    featured: false,
+    createdAt: Date.now() - 14000000,
+  },
+  {
+    id: "15",
+    url: "https://images.unsplash.com/photo-1561070791-2526d30994b5",
+    title: "Fantasy Castle",
+    genre: ["fantasy", "architecture"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 435,
+    views: 2876,
+    featured: true,
+    createdAt: Date.now() - 15000000,
+  },
+  {
+    id: "16",
+    url: "https://images.unsplash.com/photo-1519608487953-e999c86e7455",
+    title: "Vintage Camera",
+    genre: ["vintage", "technology"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 198,
+    views: 1432,
+    featured: false,
+    createdAt: Date.now() - 16000000,
+  },
+  {
+    id: "17",
+    url: "https://images.unsplash.com/photo-1534447677768-be436bb09401",
+    title: "Mountain Lake",
+    genre: ["landscapes", "nature"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 567,
+    views: 3421,
+    featured: true,
+    createdAt: Date.now() - 17000000,
+  },
+  {
+    id: "18",
+    url: "https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43",
+    title: "Futuristic City",
+    genre: ["sci-fi", "urban", "technology"],
+    source: "Unsplash",
+    width: 1600,
+    height: 2400,
+    likes: 389,
+    views: 2345,
+    featured: true,
+    createdAt: Date.now() - 18000000,
   }
 ];
 
-// Helper function to get trending wallpapers from mock data
 export const getMockTrending = () => {
   return mockWallpapers.filter(w => w.featured).slice(0, 4);
 };
 
-// Helper function to get wallpapers by genre from mock data
 export const getMockWallpapersByGenre = (genre: string | undefined) => {
   if (!genre) return mockWallpapers;
   return mockWallpapers.filter(w => w.genre.includes(genre));
