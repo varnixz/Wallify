@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Genre } from "@/types/wallpaper";
+import { Link, useNavigate } from "react-router-dom";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   onGenreSelect, 
   onSearch 
 }) => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,6 +47,16 @@ const Header: React.FC<HeaderProps> = ({
     onSearch(searchQuery);
   };
 
+  const handleGenreClick = (genreSlug: string | null) => {
+    if (genreSlug === null) {
+      navigate('/');
+    } else {
+      navigate(`/genre/${genreSlug}`);
+    }
+    onGenreSelect(genreSlug);
+    setIsMenuOpen(false);
+  };
+
   return (
     <header 
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -55,15 +67,15 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <h1 className="text-2xl font-urbanist font-bold text-white">
+            <Link to="/" className="text-2xl font-urbanist font-bold text-white">
               <span className="text-dark-accent">Wallify</span>
-            </h1>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
             <button 
-              onClick={() => onGenreSelect(null)}
+              onClick={() => handleGenreClick(null)}
               className={`text-sm font-medium transition-colors hover:text-dark-accent ${
                 activeGenre === null ? "text-dark-accent" : "text-white/80"
               }`}
@@ -74,7 +86,7 @@ const Header: React.FC<HeaderProps> = ({
             {mainGenres.map((genre) => (
               <button
                 key={genre.id}
-                onClick={() => onGenreSelect(genre.slug)}
+                onClick={() => handleGenreClick(genre.slug)}
                 className={`text-sm font-medium transition-colors hover:text-dark-accent ${
                   activeGenre === genre.slug ? "text-dark-accent" : "text-white/80"
                 }`}
@@ -96,7 +108,7 @@ const Header: React.FC<HeaderProps> = ({
                       {dropdownGenres.map((genre) => (
                         <button
                           key={genre.id}
-                          onClick={() => onGenreSelect(genre.slug)}
+                          onClick={() => handleGenreClick(genre.slug)}
                           className={`flex items-center px-4 py-2 text-sm text-left rounded-md transition-colors hover:bg-dark-accent/10 ${
                             activeGenre === genre.slug ? "text-dark-accent" : "text-white/80"
                           }`}
@@ -153,10 +165,7 @@ const Header: React.FC<HeaderProps> = ({
           </form>
 
           <button 
-            onClick={() => {
-              onGenreSelect(null);
-              setIsMenuOpen(false);
-            }}
+            onClick={() => handleGenreClick(null)}
             className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left ${
               activeGenre === null ? "text-dark-accent" : "text-white/80"
             }`}
@@ -167,10 +176,7 @@ const Header: React.FC<HeaderProps> = ({
           {genres.map((genre) => (
             <button
               key={genre.id}
-              onClick={() => {
-                onGenreSelect(genre.slug);
-                setIsMenuOpen(false);
-              }}
+              onClick={() => handleGenreClick(genre.slug)}
               className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left ${
                 activeGenre === genre.slug ? "text-dark-accent" : "text-white/80"
               }`}
