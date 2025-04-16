@@ -2,17 +2,23 @@
 import React, { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import WallpaperGrid from "@/components/WallpaperGrid";
-import { Wallpaper, Genre } from "@/types/wallpaper";
+import { Wallpaper, Genre, WallpaperFilters } from "@/types/wallpaper";
 import { getWallpapers, getGenres } from "@/services/wallpaperService";
-import { useParams } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const BrowseGenre = () => {
   const { genreSlug } = useParams<{ genreSlug: string }>();
+  const navigate = useNavigate();
+  
   const [wallpapers, setWallpapers] = useState<Wallpaper[] | null>(null);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeGenre, setActiveGenre] = useState<string | null>(genreSlug || null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [filters, setFilters] = useState<WallpaperFilters>({
+    genre: genreSlug || undefined
+  });
   
   // Fetch genres on mount
   useEffect(() => {
@@ -36,16 +42,18 @@ const BrowseGenre = () => {
   // Set active genre when URL param changes
   useEffect(() => {
     setActiveGenre(genreSlug || null);
+    setFilters(prev => ({
+      ...prev,
+      genre: genreSlug || undefined
+    }));
   }, [genreSlug]);
   
-  // Fetch wallpapers for the current genre
+  // Fetch wallpapers when filters change
   useEffect(() => {
     const loadWallpapers = async () => {
       setIsLoading(true);
       try {
-        const wallpapersData = await getWallpapers({
-          genre: activeGenre || undefined
-        });
+        const wallpapersData = await getWallpapers(filters);
         setWallpapers(wallpapersData);
       } catch (error) {
         console.error("Error loading wallpapers:", error);
@@ -60,17 +68,25 @@ const BrowseGenre = () => {
     };
     
     loadWallpapers();
-  }, [activeGenre]);
+  }, [filters]);
+  
+  // Handle genre selection
+  const handleGenreSelect = (genre: string | null) => {
+    // This navigation is now handled by Header component
+  };
   
   // Handle search
   const handleSearch = (query: string) => {
-    // Implementation for search within genre
-    if (query.trim()) {
-      toast({
-        title: "Search",
-        description: `Searching for "${query}" in ${activeGenre || "all wallpapers"}`,
-      });
-    }
+    setSearchQuery(query);
+    
+    // If searching from a genre page, redirect to home with search query
+    navigate("/");
+    
+    // Let the parent component handle the search
+    setFilters(prev => ({
+      ...prev,
+      search: query.trim() || undefined
+    }));
   };
   
   // Handle wallpaper download
@@ -95,9 +111,7 @@ const BrowseGenre = () => {
       <Header
         genres={genres}
         activeGenre={activeGenre}
-        onGenreSelect={(genre) => {
-          // This will be handled through navigation now
-        }}
+        onGenreSelect={handleGenreSelect}
         onSearch={handleSearch}
       />
       

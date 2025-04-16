@@ -10,6 +10,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
 interface HeaderProps {
   genres: Genre[];
@@ -44,7 +46,13 @@ const Header: React.FC<HeaderProps> = ({
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    onSearch(searchQuery);
+    if (searchQuery.trim()) {
+      onSearch(searchQuery);
+      navigate("/");
+      toast({
+        description: `Searching for "${searchQuery}"...`,
+      });
+    }
   };
 
   const handleGenreClick = (genreSlug: string | null) => {
@@ -128,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({
             <form onSubmit={handleSearch} className="hidden md:flex items-center mr-4">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
-                <input
+                <Input
                   type="text"
                   placeholder="Search wallpapers..."
                   className="bg-dark-lighter rounded-full pl-10 pr-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-dark-accent w-48 lg:w-64 text-white/90"
@@ -154,7 +162,7 @@ const Header: React.FC<HeaderProps> = ({
           <form onSubmit={handleSearch} className="p-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
-              <input
+              <Input
                 type="text"
                 placeholder="Search wallpapers..."
                 className="bg-dark w-full rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-dark-accent text-white/90"

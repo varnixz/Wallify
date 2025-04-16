@@ -6,6 +6,7 @@ import FeaturedWallpapers from "@/components/FeaturedWallpapers";
 import WallpaperGrid from "@/components/WallpaperGrid";
 import { Wallpaper, Genre, WallpaperFilters } from "@/types/wallpaper";
 import { getGenres, getWallpapers, getTrendingWallpapers } from "@/services/wallpaperService";
+import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
   // State for wallpapers and loading states
@@ -18,6 +19,7 @@ const Index = () => {
   // State for filters
   const [filters, setFilters] = useState<WallpaperFilters>({});
   const [activeGenre, setActiveGenre] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   
   // Fetch genres on mount
   useEffect(() => {
@@ -27,6 +29,11 @@ const Index = () => {
         setGenres(genresData);
       } catch (error) {
         console.error("Error loading genres:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load genre categories",
+          variant: "destructive",
+        });
       }
     };
     
@@ -42,6 +49,11 @@ const Index = () => {
         setTrendingWallpapers(trending);
       } catch (error) {
         console.error("Error loading trending wallpapers:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load trending wallpapers",
+          variant: "destructive",
+        });
       } finally {
         setIsLoadingTrending(false);
       }
@@ -59,6 +71,11 @@ const Index = () => {
         setWallpapers(wallpapersData);
       } catch (error) {
         console.error("Error loading wallpapers:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load wallpapers",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -74,14 +91,30 @@ const Index = () => {
       ...prev,
       genre: genre || undefined
     }));
+    
+    // Clear search when changing genres
+    if (searchQuery) {
+      setSearchQuery("");
+    }
   };
   
   // Handle search
   const handleSearch = (query: string) => {
+    setSearchQuery(query);
     setFilters(prev => ({
       ...prev,
-      search: query || undefined
+      search: query.trim() || undefined
     }));
+    
+    // Reset to All category when searching
+    if (activeGenre) {
+      setActiveGenre(null);
+      setFilters(prev => ({
+        ...prev,
+        genre: undefined,
+        search: query.trim() || undefined
+      }));
+    }
   };
   
   // Handle wallpaper download
@@ -93,6 +126,10 @@ const Index = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    toast({
+      description: "Download started...",
+    });
   };
   
   return (
@@ -108,20 +145,27 @@ const Index = () => {
       <HeroSection />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Trending Section */}
-        <div id="trending-section">
-          <FeaturedWallpapers 
-            wallpapers={trendingWallpapers} 
-            isLoading={isLoadingTrending} 
-            onDownload={handleDownload}
-            title="Trending Wallpapers"
-          />
-        </div>
+        {/* Only show trending section when not searching */}
+        {!searchQuery && (
+          <div id="trending-section">
+            <FeaturedWallpapers 
+              wallpapers={trendingWallpapers} 
+              isLoading={isLoadingTrending} 
+              onDownload={handleDownload}
+              title="Trending Wallpapers"
+            />
+          </div>
+        )}
         
         {/* Main Wallpaper Grid */}
         <section className="py-8">
           <h2 className="text-xl md:text-2xl font-heading font-medium mb-6">
-            {activeGenre ? genres.find(g => g.slug === activeGenre)?.name || 'Wallpapers' : 'All Wallpapers'}
+            {searchQuery 
+              ? `Search results for "${searchQuery}"`
+              : activeGenre 
+                ? genres.find(g => g.slug === activeGenre)?.name || 'Wallpapers' 
+                : 'All Wallpapers'
+            }
           </h2>
           <WallpaperGrid 
             wallpapers={wallpapers} 
