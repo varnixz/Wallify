@@ -33,7 +33,7 @@ const WallpaperGrid: React.FC<WallpaperGridProps> = ({
   }
 
   return (
-    <div className="wallpaper-grid">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 animate-fade-in">
       {wallpapers.map((wallpaper) => (
         <WallpaperCard
           key={wallpaper.id}
