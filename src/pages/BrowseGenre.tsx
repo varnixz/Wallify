@@ -5,6 +5,7 @@ import WallpaperGrid from "@/components/WallpaperGrid";
 import { Wallpaper, Genre } from "@/types/wallpaper";
 import { getWallpapers, getGenres } from "@/services/wallpaperService";
 import { useParams } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 
 const BrowseGenre = () => {
   const { genreSlug } = useParams<{ genreSlug: string }>();
@@ -21,6 +22,11 @@ const BrowseGenre = () => {
         setGenres(genresData);
       } catch (error) {
         console.error("Error loading genres:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load genres. Please try again.",
+          variant: "destructive",
+        });
       }
     };
     
@@ -43,6 +49,11 @@ const BrowseGenre = () => {
         setWallpapers(wallpapersData);
       } catch (error) {
         console.error("Error loading wallpapers:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load wallpapers. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
@@ -54,6 +65,12 @@ const BrowseGenre = () => {
   // Handle search
   const handleSearch = (query: string) => {
     // Implementation for search within genre
+    if (query.trim()) {
+      toast({
+        title: "Search",
+        description: `Searching for "${query}" in ${activeGenre || "all wallpapers"}`,
+      });
+    }
   };
   
   // Handle wallpaper download
@@ -65,6 +82,10 @@ const BrowseGenre = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
+    toast({
+      description: "Downloading wallpaper...",
+    });
   };
   
   const currentGenre = genres.find(g => g.slug === activeGenre);
